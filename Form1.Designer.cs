@@ -32,7 +32,8 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.monthCalendar1 = new System.Windows.Forms.MonthCalendar();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.btnSalvar = new System.Windows.Forms.Button();
+            this.txtEventos = new System.Windows.Forms.RichTextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
@@ -53,6 +54,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.BackColor = System.Drawing.Color.White;
             this.tabPage1.Controls.Add(this.monthCalendar1);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -60,19 +62,22 @@
             this.tabPage1.Size = new System.Drawing.Size(712, 493);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // monthCalendar1
             // 
+            this.monthCalendar1.BackColor = System.Drawing.SystemColors.Window;
             this.monthCalendar1.CalendarDimensions = new System.Drawing.Size(3, 3);
             this.monthCalendar1.Location = new System.Drawing.Point(12, 9);
             this.monthCalendar1.Name = "monthCalendar1";
             this.monthCalendar1.TabIndex = 0;
+            this.monthCalendar1.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendar1_DateChanged);
             this.monthCalendar1.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.monthCalendar1_DateSelected);
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.richTextBox1);
+            this.tabPage2.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.tabPage2.Controls.Add(this.btnSalvar);
+            this.tabPage2.Controls.Add(this.txtEventos);
             this.tabPage2.Controls.Add(this.label2);
             this.tabPage2.Controls.Add(this.label1);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
@@ -81,19 +86,28 @@
             this.tabPage2.Size = new System.Drawing.Size(712, 493);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // richTextBox1
+            // btnSalvar
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(12, 153);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(694, 332);
-            this.richTextBox1.TabIndex = 3;
-            this.richTextBox1.Text = "";
+            this.btnSalvar.Location = new System.Drawing.Point(526, 153);
+            this.btnSalvar.Name = "btnSalvar";
+            this.btnSalvar.Size = new System.Drawing.Size(136, 104);
+            this.btnSalvar.TabIndex = 4;
+            this.btnSalvar.Text = "Salvar Alterações";
+            this.btnSalvar.UseVisualStyleBackColor = true;
+            this.btnSalvar.Click += new System.EventHandler(this.btnSalvar_Click);
+            // 
+            // txtEventos
+            // 
+            this.txtEventos.Location = new System.Drawing.Point(12, 153);
+            this.txtEventos.Name = "txtEventos";
+            this.txtEventos.Size = new System.Drawing.Size(452, 328);
+            this.txtEventos.TabIndex = 3;
+            this.txtEventos.Text = "";
             // 
             // label2
             // 
-            this.label2.Font = new System.Drawing.Font("Arial Narrow", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(7, 113);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(163, 23);
@@ -102,7 +116,7 @@
             // 
             // label1
             // 
-            this.label1.Font = new System.Drawing.Font("Arial Narrow", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(3, 24);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(370, 41);
@@ -112,7 +126,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(745, 532);
+            this.ClientSize = new System.Drawing.Size(744, 536);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -131,8 +145,9 @@
         private System.Windows.Forms.MonthCalendar monthCalendar1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox txtEventos;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnSalvar;
     }
 }
 
