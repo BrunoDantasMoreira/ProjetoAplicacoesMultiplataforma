@@ -12,6 +12,9 @@ using System.Data.SqlClient;
 using System.Drawing.Text;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Drawing;
+using System.Windows.Forms;
+
 
 
 namespace ProjetoAplicacoesMultiplataforma
@@ -50,21 +53,56 @@ namespace ProjetoAplicacoesMultiplataforma
         private void monthCalendar1_DateSelected(object sender, DateRangeEventArgs e)
         {
             string nomeNovaTab = monthCalendar1.SelectionStart.ToShortDateString();
-            TabPage pagina = new TabPage { Text = nomeNovaTab, Name = nomeNovaTab };
+            TabPage pagina = new TabPage { 
+                Text = nomeNovaTab, 
+                Name = nomeNovaTab };
 
 
-            Label label = new Label { Text = nomeNovaTab, Location = new Point(3, 24), Font = new Font("Arial", 18), Size = new Size(370, 41) };
+            Label label = new Label { 
+                Text = nomeNovaTab, 
+                Location = new Point(3, 26), 
+                Font = new Font("Arial", 24), 
+                Size = new Size(370, 41) };
             pagina.Controls.Add(label);
 
-            Label label2 = new Label { Text = "Eventos", Location = new Point(7, 113), Font = new Font("Arial", 16), Size = new Size(163, 23) };
+            Label label2 = new Label { 
+                Text = "Eventos", 
+                Location = new Point(7, 113), 
+                Font = new Font("Arial", 20), 
+                Size = new Size(168, 37) };
             pagina.Controls.Add(label2);
 
-            textBox = new RichTextBox { Location = new Point(12, 153), Size = new Size(452, 328)};
+            textBox = new RichTextBox { 
+                Location = new Point(12, 153), 
+                Size = new Size(436, 328),
+                Font = new Font("Arial", 18),
+                BorderStyle = BorderStyle.None
+            };
             pagina.Controls.Add(textBox);
 
-            Button btnSalvar = new Button { Location = new Point(526, 153), Size = new Size(136, 104), Text = "Salvar Alterações"};
+            Button btnSalvar = new Button { 
+                Location = new Point(138, 498), 
+                Size = new Size(184, 86), Text = "Salvar Alterações",
+                FlatStyle = FlatStyle.Flat, // Removes default 3D look
+                BackColor = Color.LightSkyBlue,
+                ForeColor = Color.White,
+                Font = new Font("Arial", 12, FontStyle.Bold)
+            };
             btnSalvar.Click += btnSalvar_Click;
             pagina.Controls.Add(btnSalvar);
+
+            Button btnClose = new Button
+            {
+                Location = new Point(426, 7),
+                Size = new Size(31, 34),
+                Text = "X",
+                FlatStyle = FlatStyle.Flat, // Removes default 3D look
+                BackColor = Color.Red,
+                ForeColor = Color.White,
+                Font = new Font("Arial", 12, FontStyle.Bold)
+            };
+            btnClose.Click += btnClose_Click;
+            pagina.Controls.Add(btnClose);
 
             tabControl1.TabPages.Add(pagina);
             tabControl1.SelectedTab = pagina;
@@ -157,6 +195,11 @@ namespace ProjetoAplicacoesMultiplataforma
                     connection.Close(); // Certifica-se de que a conexão é fechada
                 }
             }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            tabControl1.TabPages.Remove(tabControl1.SelectedTab);
         }
     }
 }
