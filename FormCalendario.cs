@@ -19,12 +19,13 @@ using System.Windows.Forms;
 
 namespace ProjetoAplicacoesMultiplataforma
 {
-    public partial class Form1 : Form
+    public partial class FormCalendario : Form
     {
         private RichTextBox textBox;
         private string connectionString = @"Data Source=DESKTOP-2V8ILAN;Initial Catalog=calendario;Integrated Security=True;";
 
-        public Form1()
+
+        public FormCalendario()
         {
             InitializeComponent();
             label1.Text = monthCalendar1.TodayDate.ToShortDateString();
