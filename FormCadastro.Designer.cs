@@ -145,5 +145,6 @@
         private System.Windows.Forms.TextBox txtSenha;
         private System.Windows.Forms.TextBox txtConfirmar;
         private System.Windows.Forms.Button btnCadastrar;
-    }
+        // Certifique-se de que a associação do evento está aqui
+        }
 }

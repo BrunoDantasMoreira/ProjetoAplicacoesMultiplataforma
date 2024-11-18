@@ -14,6 +14,8 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.Drawing;
 using System.Windows.Forms;
+using ProjetoAplicacoesMultiplataforma.Utils;
+
 
 
 
@@ -112,25 +114,24 @@ namespace ProjetoAplicacoesMultiplataforma
             {
                 try
                 {
-                    connection.Open(); // Abre a conexão
-                    string query = "SELECT * FROM datas WHERE data = '" + nomeNovaTab + "'"; // Substitua 'SuaTabela' pelo nome da sua tabela
-                    SqlCommand command = new SqlCommand(query, connection);
-                    SqlDataReader reader = command.ExecuteReader();
+                    connection.Open();
+                    string query = "SELECT eventos FROM datas WHERE data = @Data AND usuario = @Usuario";
 
-                    while (reader.Read())
+                    using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        // Aqui você pode acessar os dados retornados
-                        
-                        textBox.Text = reader["eventos"].ToString(); // Substitua 'NomeColuna' pelo nome da coluna que você deseja
+                        command.Parameters.AddWithValue("@Data", monthCalendar1.SelectionStart);
+                        command.Parameters.AddWithValue("@Usuario", UserSession.UserId);
+
+                        var result = command.ExecuteScalar();
+                        if (result != null)
+                        {
+                            textBox.Text = result.ToString();
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Erro: " + ex.Message);
-                }
-                finally
-                {
-                    connection.Close(); // Certifica-se de que a conexão é fechada
+                    MessageBox.Show("Erro ao carregar eventos: " + ex.Message);
                 }
             }
         }
@@ -152,34 +153,42 @@ namespace ProjetoAplicacoesMultiplataforma
                 {
                     
                     connection.Open();
-                    string query = "SELECT COUNT(1) FROM datas WHERE [data] = @nomeNovaTab";
+                    string queryCheck = "SELECT COUNT(1) FROM datas WHERE data = @Data AND usuario = @Usuario";
 
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    using (SqlCommand commandCheck = new SqlCommand(queryCheck, connection))
                     {
 
-                        command.Parameters.AddWithValue("@nomeNovaTab", nomeNovaTab);
-                        int count = (int)command.ExecuteScalar();
+                        commandCheck.Parameters.AddWithValue("@Data", DateTime.Parse(nomeNovaTab));
+                        commandCheck.Parameters.AddWithValue("@Usuario", UserSession.UserId);
+                        int count = (int)commandCheck.ExecuteScalar();
 
                         if (count > 0)
                         {
 
-                            string query2 = "UPDATE datas SET eventos = '" + textBox.Text + "' WHERE data = '" + nomeNovaTab + "'; ";
-                            SqlCommand command2 = new SqlCommand(query2, connection);
-                            SqlDataReader reader = command2.ExecuteReader();
-                            MessageBox.Show(reader.ToString());
+                            string queryUpdate = "UPDATE datas SET eventos = @Eventos WHERE data = @Data AND usuario = @Usuario";
+                            using (SqlCommand commandUpdate = new SqlCommand(queryUpdate, connection))
+                            {
+                                commandUpdate.Parameters.AddWithValue("@Data", DateTime.Parse(nomeNovaTab));
+                                commandUpdate.Parameters.AddWithValue("@Usuario", UserSession.UserId);
+                                commandUpdate.Parameters.AddWithValue("@Eventos", textBox.Text);
 
-                            
+                                commandUpdate.ExecuteNonQuery();
+                                MessageBox.Show("Evento atualizado com sucesso!");
+                            }
                         }
                         else
                         {
 
-                            // Convert date to yyyy-MM-dd format
-                            DateTime parsedDate = DateTime.ParseExact(nomeNovaTab, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                            nomeNovaTab = parsedDate.ToString("yyyy-MM-dd");
+                            string queryInsert = "INSERT INTO datas (data, eventos, usuario) VALUES (@Data, @Eventos, @Usuario)";
+                            using (SqlCommand commandInsert = new SqlCommand(queryInsert, connection))
+                            {
+                                commandInsert.Parameters.AddWithValue("@Data", DateTime.Parse(nomeNovaTab));
+                                commandInsert.Parameters.AddWithValue("@Usuario", UserSession.UserId);
+                                commandInsert.Parameters.AddWithValue("@Eventos", textBox.Text);
 
-                            string query2 = "INSERT INTO datas (data, eventos) VALUES ('" + nomeNovaTab + "', '" + textBox.Text + "');";
-                            SqlCommand command2 = new SqlCommand(query2, connection);
-                            SqlDataReader reader = command2.ExecuteReader();
+                                commandInsert.ExecuteNonQuery();
+                                MessageBox.Show("Evento salvo com sucesso!");
+                            }
 
                         }
                     }
@@ -188,12 +197,7 @@ namespace ProjetoAplicacoesMultiplataforma
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(nomeNovaTab.ToString());
-                    MessageBox.Show("Erro: " + ex.Message);
-                }
-                finally
-                {
-                    connection.Close(); // Certifica-se de que a conexão é fechada
+                    MessageBox.Show("Erro ao salvar evento: " + ex.Message);
                 }
             }
         }

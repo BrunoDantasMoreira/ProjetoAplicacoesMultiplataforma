@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ProjetoAplicacoesMultiplataforma.Utils;
+
 
 namespace ProjetoAplicacoesMultiplataforma
 {
@@ -45,9 +47,8 @@ namespace ProjetoAplicacoesMultiplataforma
 
         private void btnEntrar_Click(object sender, EventArgs e)
         {
-
-            // Consulta SQL para verificar as credenciais
-            string query = "SELECT COUNT(1) FROM usuarios WHERE usuario = @Usuario AND Senha = @Senha";
+            // Consulta SQL para verificar as credenciais e obter o userId
+            string query = "SELECT Id FROM usuarios WHERE usuario = @Usuario AND Senha = @Senha";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -59,13 +60,18 @@ namespace ProjetoAplicacoesMultiplataforma
                     {
                         // Parâmetros para evitar SQL Injection
                         command.Parameters.AddWithValue("@Usuario", txtUsuario.Text); // usuário informado
-                        command.Parameters.AddWithValue("@Senha", txtSenha.Text);     // senha informada
+                        command.Parameters.AddWithValue("@Senha", txtSenha.Text);    // senha informada
 
                         // Executa a consulta
-                        int count = Convert.ToInt32(command.ExecuteScalar());
+                        var result = command.ExecuteScalar();
 
-                        if (count == 1)
+                        if (result != null)
                         {
+                            int userId = Convert.ToInt32(result);
+
+                            // Armazena o userId na sessão (ou outro lugar)
+                            UserSession.UserId = userId;
+
                             // Se o login for bem-sucedido, abre o formulário de calendário
                             FormCalendario calendarioForm = new FormCalendario();
                             calendarioForm.Show();
