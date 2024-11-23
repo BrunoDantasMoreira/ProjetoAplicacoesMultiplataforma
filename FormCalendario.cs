@@ -27,11 +27,83 @@ namespace ProjetoAplicacoesMultiplataforma
         private string connectionString = @"Data Source=DESKTOP-2V8ILAN;Initial Catalog=calendario;Integrated Security=True;";
 
 
+
+        private void CarregarDatas()
+        {
+            string query = "SELECT DISTINCT data FROM datas WHERE usuario = " + UserSession.UserId + ";"; // Substitua pelo nome da tabela e coluna
+
+
+            try
+            {
+                List<DateTime> datas = new List<DateTime>();
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+
+
+
+                            while (reader.Read())
+                            {
+                                DateTime data = reader.GetDateTime(reader.GetOrdinal("Data"));
+                                datas.Add(data.Date);
+                            }
+                        }
+                    }
+                }
+
+                if (datas.Count > 0)
+                {
+
+
+                    // Adicionar as datas ao MonthCalendar
+                    monthCalendar1.BoldedDates = datas.ToArray();
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar datas: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ExcluirDatasVazias()
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Query para deletar entradas com eventos vazios ou apenas espaços em branco
+                    string queryDelete = "DELETE FROM datas WHERE (eventos IS NULL OR TRIM(eventos) = '') AND usuario = @Usuario";
+
+                    using (SqlCommand commandDelete = new SqlCommand(queryDelete, connection))
+                    {
+                        commandDelete.Parameters.AddWithValue("@Usuario", UserSession.UserId);
+
+                        int rowsAffected = commandDelete.ExecuteNonQuery();
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao excluir datas vazias: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
         public FormCalendario()
         {
             InitializeComponent();
-            label1.Text = monthCalendar1.TodayDate.ToShortDateString();
+
         }
+
 
         private void ConectarAoBanco()
         {
@@ -42,7 +114,7 @@ namespace ProjetoAplicacoesMultiplataforma
             private void Form1_Load(object sender, EventArgs e)
         {
             tabControl1.TabPages[0].Text = "Calendário";
-            tabControl1.TabPages[1].Text = "Hoje";
+            CarregarDatas();
         }
 
         
@@ -51,6 +123,7 @@ namespace ProjetoAplicacoesMultiplataforma
         {
             tabControl1.TabPages.Remove(tabControl1.SelectedTab);
         }
+
 
 
         private void monthCalendar1_DateSelected(object sender, DateRangeEventArgs e)
@@ -192,7 +265,10 @@ namespace ProjetoAplicacoesMultiplataforma
 
                         }
                     }
-                    
+
+                    ExcluirDatasVazias();
+
+
 
                 }
                 catch (Exception ex)
@@ -205,6 +281,8 @@ namespace ProjetoAplicacoesMultiplataforma
         private void btnClose_Click(object sender, EventArgs e)
         {
             tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+            CarregarDatas();
+
         }
     }
 }
